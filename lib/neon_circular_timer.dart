@@ -280,26 +280,37 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                               neon: widget.neon),
                         ),
                       ),
-                      widget.isTimerTextShown
-                          ? Align(
-                              alignment: FractionalOffset.center,
-                              child: Text(
-                                time,
-                                style: widget.textStyle ??
-                                    Theme.of(context).textTheme.displaySmall,
-                              ),
-                            )
-                          : SizedBox(),
-                      widget.showDuration 
-                       ? Align(
-                          alignment: FractionalOffset.bottomCenter,
-                          child: Text(
-                            _getTime(_controller!.duration!),
-                            style: widget.textStyle ??
-                                Theme.of(context).textTheme.displaySmall,
-                          ),
-                        )
-                        : SizedBox()
+                      Align(
+                        alignment: Alignment.center,
+                        child: Column(
+                          children: [
+                            widget.isTimerTextShown
+                                ? Align(
+                                    alignment: FractionalOffset.center,
+                                    child: Text(
+                                      time,
+                                      style: widget.textStyle ??
+                                          Theme.of(context)
+                                              .textTheme
+                                              .displaySmall,
+                                    ),
+                                  )
+                                : Container(),
+                            widget.showDuration && widget.duration > 0
+                                ? Align(
+                                    alignment: FractionalOffset.center,
+                                    child: Text(
+                                      '${widget.duration}',
+                                      style: widget.textStyle ??
+                                          Theme.of(context)
+                                              .textTheme
+                                              .displaySmall,
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
