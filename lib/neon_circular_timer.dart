@@ -212,6 +212,23 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     if (widget.onComplete != null) widget.onComplete!();
   }
 
+  Widget _playPauseButton() {
+    return IconButton(
+      icon: Icon(_controller!.isAnimating ? Icons.pause : Icons.play_arrow),
+      onPressed: () {
+        if (_controller!.isAnimating) {
+          _controller!.stop();
+        } else {
+          if (widget.isReverse) {
+            _controller!.reverse(from: _controller!.value);
+          } else {
+            _controller!.forward(from: _controller!.value);
+          }
+        }
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -297,13 +314,17 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                 : Container(),
                             widget.showDuration && widget.duration > 0
                                 ? Text(
-                                    '${Duration(seconds: widget.duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: widget.duration).inSeconds % 60).toString().padLeft(2, '0')}',
+                                    'Total: ${Duration(seconds: widget.duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: widget.duration).inSeconds % 60).toString().padLeft(2, '0')}',
                                     style: widget.textStyle ??
                                         Theme.of(context)
                                             .textTheme
-                                            .displaySmall,
+                                            .displaySmall
+                                            ?.copyWith(
+                                                fontWeight: FontWeight.bold),
                                   )
                                 : Container(),
+                                SizedBox(height: 30,),
+                                _playPauseButton()
                           ],
                         ),
                       )
