@@ -345,7 +345,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                       ),
                       Align(
                         alignment: Alignment.center,
-                        child: Column(_controller!.isAnimating
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             widget.isTimerTextShown
