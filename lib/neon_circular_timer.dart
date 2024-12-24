@@ -66,6 +66,12 @@ class NeonCircularTimer extends StatefulWidget {
   /// On duration selected
   final Function(int) onDurationSelected;
 
+  /// Handles functionality of pause event
+  final VoidCallback? onPauseOrResume;
+
+  /// Handles functionality of stop event or restart event
+  final VoidCallback? onStop;
+
   /// Format for the Countdown Text.
   final TextFormat? textFormat;
 
@@ -86,9 +92,11 @@ class NeonCircularTimer extends StatefulWidget {
 
   NeonCircularTimer(
       {required this.width,
-      this.duration,
       required this.controller,
       required this.onDurationSelected,
+      this.duration,
+      this.onPauseOrResume,
+      this.onStop,
       this.innerFillColor = Colors.black12,
       this.outerStrokeColor = Colors.white,
       this.backgroundColor = Colors.white54,
@@ -237,9 +245,13 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
       onPressed: () {
         if (_controller!.isAnimating) {
           _controller!.stop();
+          if (widget.onPauseOrResume != null) widget.onPause!();
           setState(() {});
         } else {
-          _selectDuration();
+          if (duration == 0) {
+            _selectDuration();
+          }
+          if (widget.onResume != null) widget.onResume!();
           if (widget.isReverse) {
             _controller!.reverse(from: _controller!.value);
           } else {
@@ -363,7 +375,21 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                             SizedBox(
                               height: 30,
                             ),
-                            _playPauseButton()
+                            Row(
+                              children: [
+                                _playPauseButton(),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                IconButton(
+                                    icon: Icon(Icons.stop),
+                                    onPressed: () {
+                                      widget.controller?.reset();
+                                      if (widget.onStop != null)
+                                        widget.onStop!();
+                                    }),
+                              ],
+                            )
                           ],
                         ),
                       )
@@ -407,6 +433,11 @@ class CountDownController {
   /// This Method Pauses the Countdown Timer
   void pause() {
     _state._controller?.stop(canceled: false);
+  }
+
+  /// This method Resest the Countdown Timer
+  void reset() {
+    _state._controller?.reset();
   }
 
   /// This Method Resumes the Countdown Timer
