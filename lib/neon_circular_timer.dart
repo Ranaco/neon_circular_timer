@@ -218,12 +218,14 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
       onPressed: () {
         if (_controller!.isAnimating) {
           _controller!.stop();
+          setState(() {});
         } else {
           if (widget.isReverse) {
             _controller!.reverse(from: _controller!.value);
           } else {
             _controller!.forward(from: _controller!.value);
           }
+          setState(() {});
         }
       },
     );
@@ -312,6 +314,9 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                             .displaySmall,
                                   )
                                 : Container(),
+                            SizedBox(
+                              height: 20,
+                            ),
                             widget.showDuration && widget.duration > 0
                                 ? Text(
                                     'Total: ${Duration(seconds: widget.duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: widget.duration).inSeconds % 60).toString().padLeft(2, '0')}',
@@ -323,8 +328,10 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                                 fontWeight: FontWeight.bold),
                                   )
                                 : Container(),
-                                SizedBox(height: 30,),
-                                _playPauseButton()
+                            SizedBox(
+                              height: 30,
+                            ),
+                            _playPauseButton()
                           ],
                         ),
                       )
