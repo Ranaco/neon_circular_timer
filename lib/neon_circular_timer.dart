@@ -1,5 +1,6 @@
 library neon_circular_timer;
 
+import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'neon_circular_painter.dart';
 
@@ -39,7 +40,7 @@ class NeonCircularTimer extends StatefulWidget {
   final VoidCallback? onStart;
 
   /// Countdown duration in Seconds.
-  final int duration;
+  final int? duration;
 
   /// Countdown initial elapsed Duration in Seconds.
   final int initialDuration;
@@ -62,6 +63,9 @@ class NeonCircularTimer extends StatefulWidget {
   /// To show duration
   final bool showDuration;
 
+  /// On duration selected
+  final Function(int) onDurationSelected;
+
   /// Format for the Countdown Text.
   final TextFormat? textFormat;
 
@@ -82,8 +86,9 @@ class NeonCircularTimer extends StatefulWidget {
 
   NeonCircularTimer(
       {required this.width,
-      required this.duration,
+      this.duration,
       required this.controller,
+      required this.onDurationSelected,
       this.innerFillColor = Colors.black12,
       this.outerStrokeColor = Colors.white,
       this.backgroundColor = Colors.white54,
@@ -116,6 +121,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     with TickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _countDownAnimation;
+  int duration = 0;
 
   String get time {
     if (widget.isReverse && _controller!.isDismissed) {
@@ -159,13 +165,13 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     widget.controller?._state = this;
     widget.controller?._isReverse = widget.isReverse;
     widget.controller?._initialDuration = widget.initialDuration;
-    widget.controller?._duration = widget.duration;
+    widget.controller?._duration = duration;
 
     if (widget.initialDuration > 0 && widget.autoStart) {
       if (widget.isReverse) {
-        _controller?.value = 1 - (widget.initialDuration / widget.duration);
+        _controller?.value = 1 - (widget.initialDuration / duration);
       } else {
-        _controller?.value = (widget.initialDuration / widget.duration);
+        _controller?.value = (widget.initialDuration / duration);
       }
 
       widget.controller?.start();
@@ -212,6 +218,19 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     if (widget.onComplete != null) widget.onComplete!();
   }
 
+  void _selectDuration() async {
+    Duration? selDuration = await showDurationPicker(
+        context: context, initialTime: Duration(seconds: 0));
+
+    if (selDuration != null) {
+      widget.onDurationSelected(selDuration.inSeconds);
+      setState(() {
+        duration = selDuration.inSeconds;
+        _controller!.duration = Duration(seconds: duration);
+      });
+    }
+  }
+
   Widget _playPauseButton() {
     return IconButton(
       icon: Icon(_controller!.isAnimating ? Icons.pause : Icons.play_arrow),
@@ -220,6 +239,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
           _controller!.stop();
           setState(() {});
         } else {
+          _selectDuration();
           if (widget.isReverse) {
             _controller!.reverse(from: _controller!.value);
           } else {
@@ -234,9 +254,12 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   @override
   void initState() {
     super.initState();
+
+    duration = widget.duration ?? 0;
+
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: widget.duration),
+      duration: Duration(seconds: duration),
     );
 
     _controller!.addStatusListener((status) {
@@ -306,20 +329,32 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             widget.isTimerTextShown
-                                ? Text(
-                                    time,
-                                    style: widget.textStyle ??
-                                        Theme.of(context)
-                                            .textTheme
-                                            .displaySmall,
+                                ? AnimatedContainer(
+                                    duration: Duration(milliseconds: 500),
+                                    decoration: BoxDecoration(
+                                      color: (_controller!.duration! *
+                                                      _controller!.value)
+                                                  .inSeconds <
+                                              30
+                                          ? Colors.red
+                                          : Colors.black,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      time,
+                                      style: widget.textStyle ??
+                                          Theme.of(context)
+                                              .textTheme
+                                              .displaySmall,
+                                    ),
                                   )
                                 : Container(),
                             SizedBox(
                               height: 20,
                             ),
-                            widget.showDuration && widget.duration > 0
+                            widget.showDuration && duration > 0
                                 ? Text(
-                                    'Total: ${Duration(seconds: widget.duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: widget.duration).inSeconds % 60).toString().padLeft(2, '0')}',
+                                    'Total: ${Duration(seconds: duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: duration).inSeconds % 60).toString().padLeft(2, '0')}',
                                     style: widget.textStyle ??
                                         Theme.of(context)
                                             .textTheme
