@@ -70,7 +70,7 @@ class NeonCircularTimer extends StatefulWidget {
   final Function(bool)? onPauseOrResume;
 
   /// Handles functionality of stop event or restart event
-  final VoidCallback? onStop;
+  final VoidCallback? onReset;
 
   /// Format for the Countdown Text.
   final TextFormat? textFormat;
@@ -96,7 +96,7 @@ class NeonCircularTimer extends StatefulWidget {
       required this.onDurationSelected,
       this.duration,
       this.onPauseOrResume,
-      this.onStop,
+      this.onReset,
       this.innerFillColor = Colors.black12,
       this.outerStrokeColor = Colors.white,
       this.backgroundColor = Colors.white54,
@@ -188,6 +188,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
 
   void _resetTimer() {
     _controller!.reset();
+    if (widget.onReset != null) widget.onReset!();
     setState(() {
       duration = 0;
       _controller!.duration = Duration(seconds: duration);
