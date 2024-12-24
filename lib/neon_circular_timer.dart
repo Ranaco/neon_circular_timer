@@ -329,24 +329,21 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             widget.isTimerTextShown
-                                ? AnimatedContainer(
-                                    duration: Duration(milliseconds: 500),
-                                    decoration: BoxDecoration(
-                                      color: (_controller!.duration! *
-                                                      _controller!.value)
-                                                  .inSeconds <
-                                              30
-                                          ? Colors.red
-                                          : Colors.black,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      time,
-                                      style: widget.textStyle ??
-                                          Theme.of(context)
-                                              .textTheme
-                                              .displaySmall,
-                                    ),
+                                ? Text(
+                                    time,
+                                    style: widget.textStyle ??
+                                        Theme.of(context)
+                                            .textTheme
+                                            .displaySmall
+                                            ?.copyWith(
+                                              color: (_controller!.duration! *
+                                                              _controller!
+                                                                  .value)
+                                                          .inSeconds <
+                                                      30
+                                                  ? Colors.red
+                                                  : Colors.black,
+                                            ),
                                   )
                                 : Container(),
                             SizedBox(
