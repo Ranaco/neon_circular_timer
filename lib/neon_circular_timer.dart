@@ -186,6 +186,15 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     }
   }
 
+  void _resetTimer() {
+    _controller!.reset();
+    setState(() {
+      duration = 0;
+      _controller!.duration = Duration(seconds: duration);
+    });
+    widget.onDurationSelected(0);
+  }
+
   String _getTime(Duration duration) {
     // For HH:mm:ss format
     if (widget.textFormat == TextFormat.HH_MM_SS) {
@@ -336,8 +345,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                       ),
                       Align(
                         alignment: Alignment.center,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                        child: Column(_controller!.isAnimating
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             widget.isTimerTextShown
@@ -385,11 +393,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                 if (duration > 0)
                                   IconButton(
                                       icon: Icon(Icons.stop),
-                                      onPressed: () {
-                                        widget.controller?.reset();
-                                        if (widget.onStop != null)
-                                          widget.onStop!();
-                                      }),
+                                      onPressed: _resetTimer),
                               ],
                             )
                           ],
