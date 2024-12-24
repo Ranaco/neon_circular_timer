@@ -1,5 +1,7 @@
 library neon_circular_timer;
 
+import 'dart:developer';
+
 import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'neon_circular_painter.dart';
@@ -188,7 +190,11 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
 
   void _resetTimer() {
     _controller!.reset();
-    if (widget.onReset != null) widget.onReset!();
+    if (widget.onReset != null) {
+      log("Resetting");
+      widget.onReset!();
+    }
+    ;
     setState(() {
       duration = 0;
       _controller!.duration = Duration(seconds: duration);
@@ -255,13 +261,18 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
       onPressed: () {
         if (_controller!.isAnimating) {
           _controller!.stop();
-          if (widget.onPauseOrResume != null) widget.onPauseOrResume!(false);
+          if (widget.onPauseOrResume != null) {
+            log("Pausing");
+            widget.onPauseOrResume!(false);
+          }
+          ;
           setState(() {});
         } else {
           if (duration == 0) {
             _selectDuration();
           }
           if (widget.onPauseOrResume != null) widget.onPauseOrResume!(true);
+          log("Resuming");
           if (widget.isReverse) {
             _controller!.reverse(from: _controller!.value);
           } else {
