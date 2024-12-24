@@ -382,13 +382,14 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                 SizedBox(
                                   width: 5,
                                 ),
-                                IconButton(
-                                    icon: Icon(Icons.stop),
-                                    onPressed: () {
-                                      widget.controller?.reset();
-                                      if (widget.onStop != null)
-                                        widget.onStop!();
-                                    }),
+                                if (duration > 0)
+                                  IconButton(
+                                      icon: Icon(Icons.stop),
+                                      onPressed: () {
+                                        widget.controller?.reset();
+                                        if (widget.onStop != null)
+                                          widget.onStop!();
+                                      }),
                               ],
                             )
                           ],
