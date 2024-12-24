@@ -284,9 +284,9 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                         alignment: Alignment.center,
                         child: Column(
                           mainAxisSize: MainAxisSize
-                              .min, // Ensures the Column takes up only as much space as it needs.
+                              .min,
                           mainAxisAlignment: MainAxisAlignment
-                              .center, // Centers the children vertically.
+                              .center,
                           children: [
                             widget.isTimerTextShown
                                 ? Text(
