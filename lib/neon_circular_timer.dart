@@ -191,7 +191,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   void _resetTimer() {
     _controller!.reset();
     if (widget.onReset != null) {
-      log("Resetting");
       widget.onReset!();
     }
     ;
@@ -262,7 +261,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
         if (_controller!.isAnimating) {
           _controller!.stop();
           if (widget.onPauseOrResume != null) {
-            log("Pausing");
             widget.onPauseOrResume!(false);
           }
           ;
@@ -272,7 +270,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
             _selectDuration();
           }
           if (widget.onPauseOrResume != null) widget.onPauseOrResume!(true);
-          log("Resuming");
           if (widget.isReverse) {
             _controller!.reverse(from: _controller!.value);
           } else {
