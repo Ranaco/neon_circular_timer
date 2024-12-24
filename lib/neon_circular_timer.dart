@@ -376,10 +376,11 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                               height: 30,
                             ),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 _playPauseButton(),
                                 SizedBox(
-                                  width: 10,
+                                  width: 5,
                                 ),
                                 IconButton(
                                     icon: Icon(Icons.stop),
