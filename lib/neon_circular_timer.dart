@@ -283,10 +283,8 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                       Align(
                         alignment: Alignment.center,
                         child: Column(
-                          mainAxisSize: MainAxisSize
-                              .min,
-                          mainAxisAlignment: MainAxisAlignment
-                              .center,
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             widget.isTimerTextShown
                                 ? Text(
@@ -299,7 +297,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                 : Container(),
                             widget.showDuration && widget.duration > 0
                                 ? Text(
-                                    '${widget.duration}',
+                                    '${Duration(seconds: widget.duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: widget.duration).inSeconds % 60).toString().padLeft(2, '0')}',
                                     style: widget.textStyle ??
                                         Theme.of(context)
                                             .textTheme
