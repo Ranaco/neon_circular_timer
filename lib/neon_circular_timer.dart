@@ -59,6 +59,9 @@ class NeonCircularTimer extends StatefulWidget {
   /// Text Style for Countdown Text.
   final TextStyle? textStyle;
 
+  /// To show duration
+  final bool showDuration;
+
   /// Format for the Countdown Text.
   final TextFormat? textFormat;
 
@@ -100,6 +103,7 @@ class NeonCircularTimer extends StatefulWidget {
       this.key,
       this.isTimerTextShown = true,
       this.autoStart = true,
+      this.showDuration = true,
       this.textFormat = TextFormat.MM_SS,
       this.neumorphicEffect = true})
       : super(key: key);
@@ -285,7 +289,17 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                     Theme.of(context).textTheme.displaySmall,
                               ),
                             )
-                          : Container(),
+                          : SizedBox(),
+                      widget.showDuration 
+                       ? Align(
+                          alignment: FractionalOffset.bottomCenter,
+                          child: Text(
+                            _getTime(_controller!.duration!),
+                            style: widget.textStyle ??
+                                Theme.of(context).textTheme.displaySmall,
+                          ),
+                        )
+                        : SizedBox()
                     ],
                   ),
                 ),
@@ -320,6 +334,8 @@ class CountDownController {
           from: _initialDuration == 0 ? 0 : (_initialDuration! / _duration!));
     }
   }
+
+  bool get isRunning => _state._controller!.isAnimating;
 
   /// This Method Pauses the Countdown Timer
   void pause() {
