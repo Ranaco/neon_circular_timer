@@ -199,7 +199,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
       duration = 0;
       _controller!.duration = Duration(seconds: duration);
     });
-    widget.onDurationSelected(0);
+    // widget.onDurationSelected(0);
   }
 
   String _getTime(Duration duration) {
