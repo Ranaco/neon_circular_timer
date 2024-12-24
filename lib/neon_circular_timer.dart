@@ -67,7 +67,7 @@ class NeonCircularTimer extends StatefulWidget {
   final Function(int) onDurationSelected;
 
   /// Handles functionality of pause event
-  final VoidCallback? onPauseOrResume;
+  final Function(bool)? onPauseOrResume;
 
   /// Handles functionality of stop event or restart event
   final VoidCallback? onStop;
@@ -245,13 +245,13 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
       onPressed: () {
         if (_controller!.isAnimating) {
           _controller!.stop();
-          if (widget.onPauseOrResume != null) widget.onPause!();
+          if (widget.onPauseOrResume != null) widget.onPauseOrResume!(false);
           setState(() {});
         } else {
           if (duration == 0) {
             _selectDuration();
           }
-          if (widget.onResume != null) widget.onResume!();
+          if (widget.onPauseOrResume != null) widget.onPauseOrResume!(true);
           if (widget.isReverse) {
             _controller!.reverse(from: _controller!.value);
           } else {
