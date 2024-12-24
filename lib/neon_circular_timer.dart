@@ -282,31 +282,25 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                       ),
                       Align(
                         alignment: Alignment.center,
-                        child: SizedBox(
+                        child: SizedBox.shrink(
                           child: Column(
                             children: [
                               widget.isTimerTextShown
-                                  ? Align(
-                                      alignment: FractionalOffset.center,
-                                      child: Text(
-                                        time,
-                                        style: widget.textStyle ??
-                                            Theme.of(context)
-                                                .textTheme
-                                                .displaySmall,
-                                      ),
+                                  ? Text(
+                                      time,
+                                      style: widget.textStyle ??
+                                          Theme.of(context)
+                                              .textTheme
+                                              .displaySmall,
                                     )
                                   : Container(),
                               widget.showDuration && widget.duration > 0
-                                  ? Align(
-                                      alignment: FractionalOffset.center,
-                                      child: Text(
-                                        '${widget.duration}',
-                                        style: widget.textStyle ??
-                                            Theme.of(context)
-                                                .textTheme
-                                                .displaySmall,
-                                      ),
+                                  ? Text(
+                                      '${widget.duration}',
+                                      style: widget.textStyle ??
+                                          Theme.of(context)
+                                              .textTheme
+                                              .displaySmall,
                                     )
                                   : Container(),
                             ],
