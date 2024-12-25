@@ -285,7 +285,9 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   void initState() {
     super.initState();
 
-    duration = widget.duration ?? 0;
+    setState(() {
+      duration = widget.duration ?? 0;
+    });
 
     _controller = AnimationController(
       vsync: this,
