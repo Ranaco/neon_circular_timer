@@ -159,6 +159,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
         _controller!.forward();
       }
     }
+    duration = widget.duration;
   }
 
   void _setAnimationDirection() {
@@ -277,9 +278,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   @override
   void initState() {
     super.initState();
-
-    duration = widget.duration; // Initialize duration with widget's duration
-
     _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: duration),
