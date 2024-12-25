@@ -1,7 +1,5 @@
 library neon_circular_timer;
 
-import 'dart:developer';
-
 import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'neon_circular_painter.dart';
@@ -42,7 +40,7 @@ class NeonCircularTimer extends StatefulWidget {
   final VoidCallback? onStart;
 
   /// Countdown duration in Seconds.
-  final int? duration;
+  final int duration;
 
   /// Countdown initial elapsed Duration in Seconds.
   final int initialDuration;
@@ -96,7 +94,7 @@ class NeonCircularTimer extends StatefulWidget {
       {required this.width,
       required this.controller,
       required this.onDurationSelected,
-      this.duration,
+      required this.duration,
       this.onPauseOrResume,
       this.onReset,
       this.innerFillColor = Colors.black12,
@@ -131,7 +129,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     with TickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _countDownAnimation;
-  int duration = 0;
 
   String get time {
     if (widget.isReverse && _controller!.isDismissed) {
@@ -175,13 +172,13 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     widget.controller?._state = this;
     widget.controller?._isReverse = widget.isReverse;
     widget.controller?._initialDuration = widget.initialDuration;
-    widget.controller?._duration = duration;
+    widget.controller?._duration = widget.duration;
 
     if (widget.initialDuration > 0 && widget.autoStart) {
       if (widget.isReverse) {
-        _controller?.value = 1 - (widget.initialDuration / duration);
+        _controller?.value = 1 - (widget.initialDuration / widget.duration);
       } else {
-        _controller?.value = (widget.initialDuration / duration);
+        _controller?.value = (widget.initialDuration / widget.duration);
       }
 
       widget.controller?.start();
@@ -194,10 +191,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
       widget.onReset!();
     }
     ;
-    setState(() {
-      duration = 0;
-      _controller!.duration = Duration(seconds: duration);
-    });
     // widget.onDurationSelected(0);
   }
 
@@ -248,8 +241,8 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     if (selDuration != null) {
       widget.onDurationSelected(selDuration.inSeconds);
       setState(() {
-        duration = selDuration.inSeconds;
-        _controller!.duration = Duration(seconds: duration);
+        var someDuration = selDuration.inSeconds;
+        _controller!.duration = Duration(seconds: someDuration);
       });
     }
   }
@@ -266,9 +259,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
           ;
           setState(() {});
         } else {
-          if (duration == 0) {
-            _selectDuration();
-          }
           if (widget.onPauseOrResume != null) widget.onPauseOrResume!(true);
           if (widget.isReverse) {
             _controller!.reverse(from: _controller!.value);
@@ -285,13 +275,9 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   void initState() {
     super.initState();
 
-    setState(() {
-      duration = widget.duration ?? 0;
-    });
-
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: duration),
+      duration: Duration(seconds: widget.duration),
     );
 
     _controller!.addStatusListener((status) {
@@ -380,9 +366,9 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                             SizedBox(
                               height: 20,
                             ),
-                            widget.showDuration && duration > 0
+                            widget.showDuration && widget.duration > 0
                                 ? Text(
-                                    'Total: ${Duration(seconds: duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: duration).inSeconds % 60).toString().padLeft(2, '0')}',
+                                    'Total: ${Duration(seconds: widget.duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: widget.duration).inSeconds % 60).toString().padLeft(2, '0')}',
                                     style: widget.textStyle ??
                                         Theme.of(context)
                                             .textTheme
@@ -401,7 +387,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                 SizedBox(
                                   width: 5,
                                 ),
-                                if (duration > 0)
+                                if (widget.duration > 0)
                                   IconButton(
                                       icon: Icon(Icons.stop),
                                       onPressed: _resetTimer),
