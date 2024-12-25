@@ -247,7 +247,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
             widget.onPauseOrResume!(false);
           }
           ;
-          setState(() {});
         } else {
           if (widget.onPauseOrResume != null) widget.onPauseOrResume!(true);
           if (widget.isReverse) {
@@ -255,8 +254,8 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
           } else {
             _controller!.forward(from: _controller!.value);
           }
-          setState(() {});
         }
+        setState(() {});
       },
     );
   }
@@ -351,7 +350,8 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                             SizedBox(
                               height: 20,
                             ),
-                            widget.showDuration && duration > 0
+                            widget.showDuration &&
+                                    _controller!.duration!.inSeconds > 0
                                 ? Text(
                                     'Total: ${Duration(seconds: duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: duration).inSeconds % 60).toString().padLeft(2, '0')}',
                                     style: widget.textStyle ??
@@ -372,7 +372,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                 SizedBox(
                                   width: 5,
                                 ),
-                                if (duration > 0)
+                                if (_controller!.duration!.inSeconds > 0)
                                   IconButton(
                                       icon: Icon(Icons.stop),
                                       onPressed: _resetTimer),
