@@ -192,6 +192,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
       widget.onReset!();
     }
     ;
+    _controller!.duration = Duration(seconds: 0);
     setState(() {
       duration = 0;
     });
@@ -353,7 +354,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                             widget.showDuration &&
                                     _controller!.duration!.inSeconds > 0
                                 ? Text(
-                                    'Total: ${Duration(seconds: duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: duration).inSeconds % 60).toString().padLeft(2, '0')}',
+                                    'Total: ${_controller!.duration!.inMinutes.toString().padLeft(2, '0')}:${(_controller!.duration!.inSeconds % 60).toString().padLeft(2, '0')}',
                                     style: widget.textStyle ??
                                         Theme.of(context)
                                             .textTheme
