@@ -90,12 +90,16 @@ class NeonCircularTimer extends StatefulWidget {
   /// Handles the timer start.
   final bool autoStart;
 
+  /// Widget to add ten minutes to the timer
+  final Widget? tenMinutesWidget;
+
   NeonCircularTimer(
       {required this.width,
       required this.controller,
       required this.onDurationSelected,
       required this.duration,
       this.onPauseOrResume,
+      this.tenMinutesWidget,
       this.onReset,
       this.innerFillColor = Colors.black12,
       this.outerStrokeColor = Colors.white,
@@ -377,6 +381,11 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                   IconButton(
                                       icon: Icon(Icons.stop),
                                       onPressed: _resetTimer),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                if (widget.tenMinutesWidget != null)
+                                  widget.tenMinutesWidget!
                               ],
                             )
                           ],
