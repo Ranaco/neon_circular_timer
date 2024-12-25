@@ -129,7 +129,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     with TickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _countDownAnimation;
-  late int duration;
+  int duration = 0;
 
   String get time {
     if (widget.isReverse && _controller!.isDismissed) {
