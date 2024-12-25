@@ -129,7 +129,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     with TickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _countDownAnimation;
-  int duration = 0;
+  late int duration;
 
   String get time {
     if (widget.isReverse && _controller!.isDismissed) {
@@ -159,7 +159,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
         _controller!.forward();
       }
     }
-    duration = widget.duration;
   }
 
   void _setAnimationDirection() {
@@ -238,19 +237,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     if (widget.onComplete != null) widget.onComplete!();
   }
 
-  void _selectDuration() async {
-    Duration? selDuration = await showDurationPicker(
-        context: context, initialTime: Duration(seconds: 0));
-
-    if (selDuration != null) {
-      widget.onDurationSelected(selDuration.inSeconds);
-      setState(() {
-        var someDuration = selDuration.inSeconds;
-        _controller!.duration = Duration(seconds: someDuration);
-      });
-    }
-  }
-
   Widget _playPauseButton() {
     return IconButton(
       icon: Icon(_controller!.isAnimating ? Icons.pause : Icons.play_arrow),
@@ -278,6 +264,9 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   @override
   void initState() {
     super.initState();
+
+    duration = widget.duration;
+
     _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: duration),
