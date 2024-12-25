@@ -129,7 +129,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     with TickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _countDownAnimation;
-  int keyValue = 0;
+  int duration = 0;
 
   String get time {
     if (widget.isReverse && _controller!.isDismissed) {
@@ -173,13 +173,13 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     widget.controller?._state = this;
     widget.controller?._isReverse = widget.isReverse;
     widget.controller?._initialDuration = widget.initialDuration;
-    widget.controller?._duration = widget.duration;
+    widget.controller?._duration = duration;
 
     if (widget.initialDuration > 0 && widget.autoStart) {
       if (widget.isReverse) {
-        _controller?.value = 1 - (widget.initialDuration / widget.duration);
+        _controller?.value = 1 - (widget.initialDuration / duration);
       } else {
-        _controller?.value = (widget.initialDuration / widget.duration);
+        _controller?.value = (widget.initialDuration / duration);
       }
 
       widget.controller?.start();
@@ -193,7 +193,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     }
     ;
     setState(() {
-      keyValue = 0;
+      duration = 0;
     });
   }
 
@@ -280,10 +280,10 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
 
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: widget.duration),
+      duration: Duration(seconds: duration),
     );
 
-    keyValue = widget.key.hashCode;
+    duration = duration;
     setState(() {});
 
     _controller!.addStatusListener((status) {
@@ -318,7 +318,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   @override
   Widget build(BuildContext context) {
     return Center(
-      key: ValueKey<int>(keyValue),
       child: Container(
         width: widget.width,
         height: widget.width,
@@ -373,9 +372,9 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                             SizedBox(
                               height: 20,
                             ),
-                            widget.showDuration && widget.duration > 0
+                            widget.showDuration && duration > 0
                                 ? Text(
-                                    'Total: ${Duration(seconds: widget.duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: widget.duration).inSeconds % 60).toString().padLeft(2, '0')}',
+                                    'Total: ${Duration(seconds: duration).inMinutes.toString().padLeft(2, '0')}:${(Duration(seconds: duration).inSeconds % 60).toString().padLeft(2, '0')}',
                                     style: widget.textStyle ??
                                         Theme.of(context)
                                             .textTheme
@@ -394,7 +393,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                 SizedBox(
                                   width: 5,
                                 ),
-                                if (widget.duration > 0)
+                                if (duration > 0)
                                   IconButton(
                                       icon: Icon(Icons.stop),
                                       onPressed: _resetTimer),
