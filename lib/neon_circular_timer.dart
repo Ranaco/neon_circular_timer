@@ -278,35 +278,27 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   void initState() {
     super.initState();
 
+    duration = widget.duration; // Initialize duration with widget's duration
+
     _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: duration),
     );
 
-    duration = duration;
-    setState(() {});
-
     _controller!.addStatusListener((status) {
       switch (status) {
         case AnimationStatus.forward:
-          _onStart();
-          break;
-
         case AnimationStatus.reverse:
           _onStart();
           break;
-
         case AnimationStatus.dismissed:
-          _onComplete();
-          break;
         case AnimationStatus.completed:
-
-          /// [AnimationController]'s value is manually set to [1.0] that's why [AnimationStatus.completed] is invoked here this animation is [isReverse]
-          /// Only call the [_onComplete] block when the animation is not reversed.
-          if (!widget.isReverse) _onComplete();
+          if (!widget.isReverse || status == AnimationStatus.dismissed) {
+            _onComplete();
+          }
           break;
         default:
-        // Do nothing
+          break;
       }
     });
 
