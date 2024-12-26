@@ -377,7 +377,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                                 SizedBox(
                                   width: 5,
                                 ),
-                                if (_controller!.duration!.inSeconds > 0)
+                                if ( _controller!.duration!.inSeconds > 0)
                                   IconButton(
                                       icon: Icon(Icons.stop),
                                       onPressed: _resetTimer),
@@ -410,7 +410,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
 
 /// Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
 class CountDownController {
-  late NeonCircularTimerState _state;
+  NeonCircularTimerState _state = NeonCircularTimerState();
   late bool _isReverse;
   int? _initialDuration, _duration;
 
