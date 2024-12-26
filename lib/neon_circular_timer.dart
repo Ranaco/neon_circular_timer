@@ -410,7 +410,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
 
 /// Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
 class CountDownController {
-  NeonCircularTimerState _state = NeonCircularTimerState();
+  late NeonCircularTimerState _state;
   late bool _isReverse;
   int? _initialDuration, _duration;
 
