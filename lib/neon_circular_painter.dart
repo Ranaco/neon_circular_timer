@@ -31,7 +31,7 @@ class CustomTimerPainter extends CustomPainter {
       ..color = neonColor!
       ..strokeWidth = strokeWidth!
       ..strokeCap = strokeCap!
-      // ..maskFilter = MaskFilter.blur(BlurStyle.outer, neon!)
+      ..maskFilter = MaskFilter.blur(BlurStyle.outer, neon!)
       ..style = PaintingStyle.stroke;
     Paint strokePaint = Paint()
       ..color = neonColor!.withOpacity(0.8)
@@ -52,8 +52,8 @@ class CustomTimerPainter extends CustomPainter {
         ..color = innerFillColor!
         ..strokeWidth = strokeWidth!
         ..strokeCap = strokeCap!
-        ..style = PaintingStyle.stroke;
-      // ..maskFilter = MaskFilter.blur(BlurStyle.inner, 4);
+        ..style = PaintingStyle.stroke
+        // ..maskFilter = MaskFilter.blur(BlurStyle.inner, 4);
       backgroundPaint
         ..color = backgroundColor!
         ..style = PaintingStyle.fill;
