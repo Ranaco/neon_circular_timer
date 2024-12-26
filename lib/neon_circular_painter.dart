@@ -31,7 +31,7 @@ class CustomTimerPainter extends CustomPainter {
       ..color = neonColor!
       ..strokeWidth = strokeWidth!
       ..strokeCap = strokeCap!
-      ..maskFilter = MaskFilter.blur(BlurStyle.outer, neon!)
+      // ..maskFilter = MaskFilter.blur(BlurStyle.outer, neon!)
       ..style = PaintingStyle.stroke;
     Paint strokePaint = Paint()
       ..color = neonColor!.withOpacity(0.8)
@@ -53,7 +53,7 @@ class CustomTimerPainter extends CustomPainter {
         ..strokeWidth = strokeWidth!
         ..strokeCap = strokeCap!
         ..style = PaintingStyle.stroke;
-        // ..maskFilter = MaskFilter.blur(BlurStyle.inner, 4);
+      // ..maskFilter = MaskFilter.blur(BlurStyle.inner, 4);
       backgroundPaint
         ..color = backgroundColor!
         ..style = PaintingStyle.fill;
@@ -64,7 +64,7 @@ class CustomTimerPainter extends CustomPainter {
           center: size.center(Offset.zero), radius: size.width / 2);
       blurPaint..shader = neonGradient!.createShader(rect);
     } else {
-      blurPaint..shader = null;1
+      blurPaint..shader = null;
     }
 
     double progress = (animation!.value) * 2 * math.pi;
