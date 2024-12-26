@@ -177,6 +177,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     widget.controller?._state = this;
     widget.controller?._isReverse = widget.isReverse;
     widget.controller?._initialDuration = widget.initialDuration;
+    duration = widget.duration;
     widget.controller?._duration = duration;
 
     if (widget.initialDuration > 0 && widget.autoStart) {
