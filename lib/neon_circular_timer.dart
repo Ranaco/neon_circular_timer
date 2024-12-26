@@ -181,12 +181,12 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
 
     if (widget.initialDuration > 0 && widget.autoStart) {
       if (widget.isReverse) {
-        _controller?.value = 1 - (widget.initialDuration / widget.duration);
+        _controller?.value = 1 - (widget.initialDuration / duration);
       } else {
-        _controller?.value = (widget.initialDuration / widget.duration);
+        _controller?.value = (widget.initialDuration / duration);
       }
 
-      widget.controller?.start(widget.isReverse);
+      widget.controller?.start();
     }
   }
 
@@ -415,8 +415,8 @@ class CountDownController {
   int? _initialDuration, _duration;
 
   /// This Method Starts the Countdown Timer
-  void start(isReverse) {
-    if (isReverse) {
+  void start() {
+    if (_isReverse) {
       _state._controller?.reverse(
           from:
               _initialDuration == 0 ? 1 : 1 - (_initialDuration! / _duration!));
