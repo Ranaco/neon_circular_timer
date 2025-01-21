@@ -461,10 +461,13 @@ class CountDownController {
 
   /// This Method returns the **Current Time** of Countdown Timer
   /// Formated into the selected [TextFormat]
-  String getTime() {
-    return _state
-        ._getTime(_state._controller!.duration! * _state._controller!.value);
+String getTime() {
+  if (_state._controller?.isAnimating == true || _state._controller?.isCompleted == true) {
+    return _state._getTime(_state._controller!.duration! * _state._controller!.value);
+  } else {
+    return "00:00";
   }
+}
 
   /// This Method returns the **Current Time** of Countdown Timer
   /// in seconds
