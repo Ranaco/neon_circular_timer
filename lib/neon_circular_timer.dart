@@ -156,6 +156,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
       (_controller!.duration! * _controller!.value).inSeconds;
 
   void _setAnimation() {
+    if (!mounted) return;
     if (widget.autoStart) {
       if (widget.isReverse) {
         _controller!.reverse(from: 1);
@@ -450,6 +451,8 @@ class CountDownController {
   /// This Method Restarts the Countdown Timer,
   /// Here optional int parameter **duration** is the updated duration for countdown timer
   void restart({int? duration}) {
+    if (_state._controller == null || !_state.mounted) return;
+
     _state._controller!.duration =
         Duration(seconds: duration ?? _state._controller!.duration!.inSeconds);
     if (_isReverse) {
@@ -461,13 +464,15 @@ class CountDownController {
 
   /// This Method returns the **Current Time** of Countdown Timer
   /// Formated into the selected [TextFormat]
-String getTime() {
-  if (_state._controller?.isAnimating == true || _state._controller?.isCompleted == true) {
-    return _state._getTime(_state._controller!.duration! * _state._controller!.value);
-  } else {
-    return "00:00";
+  String getTime() {
+    if (_state._controller?.isAnimating == true ||
+        _state._controller?.isCompleted == true) {
+      return _state
+          ._getTime(_state._controller!.duration! * _state._controller!.value);
+    } else {
+      return "00:00";
+    }
   }
-}
 
   /// This Method returns the **Current Time** of Countdown Timer
   /// in seconds
