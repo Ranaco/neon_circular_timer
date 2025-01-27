@@ -285,7 +285,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
           break;
         case AnimationStatus.dismissed:
         case AnimationStatus.completed:
-          if (!widget.isReverse || status == AnimationStatus.dismissed) {
+          if (!widget.isReverse || status == AnimationStatus.completed) {
             _onComplete();
           }
           break;
