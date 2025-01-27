@@ -133,7 +133,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     with TickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _countDownAnimation;
-  int duration = 0;
 
   String get time {
     if (widget.isReverse && _controller!.isDismissed) {
@@ -177,13 +176,13 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     widget.controller?._state = this;
     widget.controller?._isReverse = widget.isReverse;
     widget.controller?._initialDuration = widget.initialDuration;
-    widget.controller?._duration = duration;
+    widget.controller?._duration = widget.duration;
 
     if (widget.initialDuration > 0 && widget.autoStart) {
       if (widget.isReverse) {
-        _controller?.value = 1 - (widget.initialDuration / duration);
+        _controller?.value = 1 - (widget.initialDuration / widget.duration);
       } else {
-        _controller?.value = (widget.initialDuration / duration);
+        _controller?.value = (widget.initialDuration / widget.duration);
       }
 
       widget.controller?.start();
@@ -197,9 +196,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     }
     ;
     _controller!.duration = Duration(seconds: 0);
-    setState(() {
-      duration = 0;
-    });
   }
 
   String _getTime(Duration duration) {
@@ -269,11 +265,9 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   void initState() {
     super.initState();
 
-    duration = widget.duration;
-
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: duration),
+      duration: Duration(seconds: widget.duration),
     );
 
     _controller!.addStatusListener((status) {
