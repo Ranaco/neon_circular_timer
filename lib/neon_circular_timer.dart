@@ -156,7 +156,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
       (_controller!.duration! * _controller!.value).inSeconds;
 
   void _setAnimation() {
-    if (!mounted) return;
     if (widget.autoStart) {
       if (widget.isReverse) {
         _controller!.reverse(from: 1);
@@ -175,7 +174,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   }
 
   void _setController() {
-    widget.controller?.state = this;
+    widget.controller?._state = this;
     widget.controller?._isReverse = widget.isReverse;
     widget.controller?._initialDuration = widget.initialDuration;
     widget.controller?._duration = duration;
@@ -411,73 +410,66 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
 
 /// Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
 class CountDownController {
-  late NeonCircularTimerState state;
+  late NeonCircularTimerState _state;
   late bool _isReverse;
   int? _initialDuration, _duration;
 
   /// This Method Starts the Countdown Timer
   void start() {
     if (_isReverse) {
-      state._controller?.reverse(
+      _state._controller?.reverse(
           from:
               _initialDuration == 0 ? 1 : 1 - (_initialDuration! / _duration!));
     } else {
-      state._controller?.forward(
+      _state._controller?.forward(
           from: _initialDuration == 0 ? 0 : (_initialDuration! / _duration!));
     }
   }
 
-  bool get isRunning => state._controller!.isAnimating;
+  bool get isRunning => _state._controller!.isAnimating;
 
   /// This Method Pauses the Countdown Timer
   void pause() {
-    state._controller?.stop(canceled: false);
+    _state._controller?.stop(canceled: false);
   }
 
   /// This method Resest the Countdown Timer
   void reset() {
-    state._controller?.reset();
+    _state._controller?.reset();
   }
 
   /// This Method Resumes the Countdown Timer
   void resume() {
     if (_isReverse) {
-      state._controller?.reverse(from: state._controller!.value);
+      _state._controller?.reverse(from: _state._controller!.value);
     } else {
-      state._controller?.forward(from: state._controller!.value);
+      _state._controller?.forward(from: _state._controller!.value);
     }
   }
 
   /// This Method Restarts the Countdown Timer,
   /// Here optional int parameter **duration** is the updated duration for countdown timer
   void restart({int? duration}) {
-    if (state._controller == null || !state.mounted) return;
-
-    state._controller!.duration =
-        Duration(seconds: duration ?? state._controller!.duration!.inSeconds);
+    _state._controller!.duration =
+        Duration(seconds: duration ?? _state._controller!.duration!.inSeconds);
     if (_isReverse) {
-      state._controller?.reverse(from: 1);
+      _state._controller?.reverse(from: 1);
     } else {
-      state._controller?.forward(from: 0);
+      _state._controller?.forward(from: 0);
     }
   }
 
   /// This Method returns the **Current Time** of Countdown Timer
   /// Formated into the selected [TextFormat]
   String getTime() {
-    if (state._controller?.isAnimating == true ||
-        state._controller?.isCompleted == true) {
-      return state
-          ._getTime(state._controller!.duration! * state._controller!.value);
-    } else {
-      return "00:00";
-    }
+    return _state
+        ._getTime(_state._controller!.duration! * _state._controller!.value);
   }
 
   /// This Method returns the **Current Time** of Countdown Timer
   /// in seconds
   int getTimeInSeconds() {
-    return state.currentTime;
+    return _state.currentTime;
   }
 }
 
