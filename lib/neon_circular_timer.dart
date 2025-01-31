@@ -70,7 +70,7 @@ class NeonCircularTimer extends StatefulWidget {
   final Function(bool)? onPauseOrResume;
 
   /// Handles functionality of stop event or restart event
-  final Function(bool)? onReset;_
+  final Function(bool)? onReset;
 
   /// Format for the Countdown Text.
   final TextFormat? textFormat;
