@@ -1,7 +1,5 @@
 library neon_circular_timer;
 
-import 'dart:developer';
-
 import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'neon_circular_painter.dart';
@@ -135,6 +133,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     with TickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _countDownAnimation;
+  int duration = 0;
 
   String get time {
     if (widget.isReverse && _controller!.isDismissed) {
@@ -178,7 +177,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     widget.controller?._state = this;
     widget.controller?._isReverse = widget.isReverse;
     widget.controller?._initialDuration = widget.initialDuration;
-    widget.controller?._duration = widget.duration;
+    widget.controller?._duration = duration;
 
     if (widget.initialDuration > 0 && widget.autoStart) {
       if (widget.isReverse) {
@@ -187,7 +186,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
         _controller?.value = (widget.initialDuration / widget.duration);
       }
 
-      widget.controller?.start();
+      widget.controller?.start(widget.isReverse);
     }
   }
 
@@ -198,6 +197,9 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     }
     ;
     _controller!.duration = Duration(seconds: 0);
+    setState(() {
+      duration = 0;
+    });
   }
 
   String _getTime(Duration duration) {
@@ -237,8 +239,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   }
 
   void _onComplete() {
-    log("OnCOmplete from timer");
-    // if (widget.onComplete != null) widget.onComplete!();
+    if (widget.onComplete != null) widget.onComplete!();
   }
 
   Widget _playPauseButton() {
@@ -268,9 +269,11 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   void initState() {
     super.initState();
 
+    duration = widget.duration;
+
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: widget.duration),
+      duration: Duration(seconds: duration),
     );
 
     _controller!.addStatusListener((status) {
@@ -281,7 +284,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
           break;
         case AnimationStatus.dismissed:
         case AnimationStatus.completed:
-          if (!widget.isReverse || status == AnimationStatus.completed) {
+          if (!widget.isReverse || status == AnimationStatus.dismissed) {
             _onComplete();
           }
           break;
@@ -412,8 +415,8 @@ class CountDownController {
   int? _initialDuration, _duration;
 
   /// This Method Starts the Countdown Timer
-  void start() {
-    if (_isReverse) {
+  void start(isReverse) {
+    if (isReverse) {
       _state._controller?.reverse(
           from:
               _initialDuration == 0 ? 1 : 1 - (_initialDuration! / _duration!));
