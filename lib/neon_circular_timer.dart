@@ -59,6 +59,18 @@ class NeonCircularTimer extends StatefulWidget {
   /// Text Style for Countdown Text.
   final TextStyle? textStyle;
 
+  /// To show duration
+  final bool showDuration;
+
+  /// On duration selected
+  final Function(int) onDurationSelected;
+
+  /// Handles functionality of pause event
+  final Function(bool)? onPauseOrResume;
+
+  /// Handles functionality of stop event or restart event
+  final Function(bool)? onReset;
+
   /// Format for the Countdown Text.
   final TextFormat? textFormat;
 
@@ -77,10 +89,17 @@ class NeonCircularTimer extends StatefulWidget {
   /// Handles the timer start.
   final bool autoStart;
 
+  /// Widget to add ten minutes to the timer
+  final Widget? tenMinutesWidget;
+
   NeonCircularTimer(
       {required this.width,
-      required this.duration,
       required this.controller,
+      required this.onDurationSelected,
+      required this.duration,
+      this.onPauseOrResume,
+      this.tenMinutesWidget,
+      this.onReset,
       this.innerFillColor = Colors.black12,
       this.outerStrokeColor = Colors.white,
       this.backgroundColor = Colors.white54,
@@ -100,6 +119,7 @@ class NeonCircularTimer extends StatefulWidget {
       this.key,
       this.isTimerTextShown = true,
       this.autoStart = true,
+      this.showDuration = true,
       this.textFormat = TextFormat.MM_SS,
       this.neumorphicEffect = true})
       : super(key: key);
@@ -112,6 +132,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     with TickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _countDownAnimation;
+  int duration = 0;
 
   String get time {
     if (widget.isReverse && _controller!.isDismissed) {
@@ -155,17 +176,29 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     widget.controller?._state = this;
     widget.controller?._isReverse = widget.isReverse;
     widget.controller?._initialDuration = widget.initialDuration;
-    widget.controller?._duration = widget.duration;
+    widget.controller?._duration = duration;
 
     if (widget.initialDuration > 0 && widget.autoStart) {
       if (widget.isReverse) {
-        _controller?.value = 1 - (widget.initialDuration / widget.duration);
+        _controller?.value = 1 - (widget.initialDuration / duration);
       } else {
-        _controller?.value = (widget.initialDuration / widget.duration);
+        _controller?.value = (widget.initialDuration / duration);
       }
 
       widget.controller?.start();
     }
+  }
+
+  void _resetTimer() {
+    _controller!.reset();
+    if (widget.onReset != null) {
+      widget.onReset!(true);
+    }
+    ;
+    _controller!.duration = Duration(seconds: 0);
+    setState(() {
+      duration = 0;
+    });
   }
 
   String _getTime(Duration duration) {
@@ -208,35 +241,64 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     if (widget.onComplete != null) widget.onComplete!();
   }
 
+  Widget _playPauseButton() {
+    return InkWell(
+      child: Container(
+        padding: EdgeInsets.all(14),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(double.infinity),
+            color: Color(0xffFFDA44).withOpacity(0.1)),
+        child: Center(
+            child: Icon(
+          _controller!.isAnimating ? Icons.pause : Icons.play_arrow,
+          color: Color(0xffFFB534),
+        )),
+      ),
+      onTap: () {
+        if (_controller!.isAnimating) {
+          _controller!.stop();
+          if (widget.onPauseOrResume != null) {
+            widget.onPauseOrResume!(false);
+          }
+          ;
+        } else {
+          if (widget.onPauseOrResume != null) widget.onPauseOrResume!(true);
+          if (widget.isReverse) {
+            _controller!.reverse(from: _controller!.value);
+          } else {
+            _controller!.forward(from: _controller!.value);
+          }
+        }
+        setState(() {});
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+
+    duration = widget.duration;
+
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: widget.duration),
+      duration: Duration(seconds: duration),
     );
 
     _controller!.addStatusListener((status) {
       switch (status) {
         case AnimationStatus.forward:
-          _onStart();
-          break;
-
         case AnimationStatus.reverse:
           _onStart();
           break;
-
         case AnimationStatus.dismissed:
-          _onComplete();
-          break;
         case AnimationStatus.completed:
-
-          /// [AnimationController]'s value is manually set to [1.0] that's why [AnimationStatus.completed] is invoked here this animation is [isReverse]
-          /// Only call the [_onComplete] block when the animation is not reversed.
-          if (!widget.isReverse) _onComplete();
+          if (!widget.isReverse || status == AnimationStatus.dismissed) {
+            _onComplete();
+          }
           break;
         default:
-        // Do nothing
+          break;
       }
     });
 
@@ -276,16 +338,68 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                               neon: widget.neon),
                         ),
                       ),
-                      widget.isTimerTextShown
-                          ? Align(
-                              alignment: FractionalOffset.center,
-                              child: Text(
-                                time,
-                                style: widget.textStyle ??
-                                    Theme.of(context).textTheme.displaySmall,
-                              ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            widget.isTimerTextShown
+                                ? Text(
+                                    time,
+                                    style: widget.textStyle ??
+                                        Theme.of(context)
+                                            .textTheme
+                                            .displaySmall
+                                            ?.copyWith(
+                                              color: (_controller!.duration! *
+                                                              _controller!
+                                                                  .value)
+                                                          .inSeconds <
+                                                      30
+                                                  ? Colors.red
+                                                  : Colors.black,
+                                            ),
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            widget.showDuration &&
+                                    _controller!.duration!.inSeconds > 0
+                                ? Text(
+                                    'Total: ${_controller!.duration!.inMinutes.toString().padLeft(2, '0')}:${(_controller!.duration!.inSeconds % 60).toString().padLeft(2, '0')}',
+                                    style: widget.textStyle ??
+                                        Theme.of(context)
+                                            .textTheme
+                                            .displaySmall
+                                            ?.copyWith(
+                                                fontWeight: FontWeight.bold),
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _playPauseButton(),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                if (_controller!.duration!.inSeconds > 0)
+                                  IconButton(
+                                      icon: Icon(Icons.stop),
+                                      onPressed: _resetTimer),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                if (widget.tenMinutesWidget != null)
+                                  widget.tenMinutesWidget!
+                              ],
                             )
-                          : Container(),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -321,9 +435,16 @@ class CountDownController {
     }
   }
 
+  bool get isRunning => _state._controller!.isAnimating;
+
   /// This Method Pauses the Countdown Timer
   void pause() {
     _state._controller?.stop(canceled: false);
+  }
+
+  /// This method Resest the Countdown Timer
+  void reset() {
+    _state._controller?.reset();
   }
 
   /// This Method Resumes the Countdown Timer
