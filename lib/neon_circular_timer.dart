@@ -282,7 +282,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
 
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: duration),
+      duration: Duration(seconds: widget.duration),
     );
 
     _controller!.addStatusListener((status) {
@@ -290,11 +290,13 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
       print(widget.duration);
       switch (status) {
         case AnimationStatus.forward:
+          _onStart();
+          break;
         case AnimationStatus.reverse:
           _onStart();
-          break; 
+          break;
         case AnimationStatus.completed:
-         if (widget.duration == 0) break;
+          if (widget.duration == 0) break;
           _onComplete();
           break;
         default:
