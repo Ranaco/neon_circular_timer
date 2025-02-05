@@ -286,16 +286,16 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     );
 
     _controller!.addStatusListener((status) {
+      print(status.name);
+      print(widget.duration);
       switch (status) {
         case AnimationStatus.forward:
         case AnimationStatus.reverse:
           _onStart();
-          break;
-        case AnimationStatus.dismissed:
+          break; 
         case AnimationStatus.completed:
-          if (!widget.isReverse || status == AnimationStatus.dismissed) {
-            _onComplete();
-          }
+         if (widget.duration == 0) break;
+          _onComplete();
           break;
         default:
           break;
