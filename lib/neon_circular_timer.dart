@@ -1,6 +1,5 @@
 library neon_circular_timer;
 
-import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'neon_circular_painter.dart';
 
@@ -243,9 +242,19 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   }
 
   Widget _playPauseButton() {
-    return IconButton(
-      icon: Icon(_controller!.isAnimating ? Icons.pause : Icons.play_arrow),
-      onPressed: () {
+    return InkWell(
+      child: Container(
+        padding: EdgeInsets.all(14),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(double.infinity),
+            color: Color(0xffFFDA44).withOpacity(0.1)),
+        child: Center(
+            child: Icon(
+          _controller!.isAnimating ? Icons.pause : Icons.play_arrow,
+          color: Color(0xffFFB534),
+        )),
+      ),
+      onTap: () {
         if (_controller!.isAnimating) {
           _controller!.stop();
           if (widget.onPauseOrResume != null) {
