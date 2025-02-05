@@ -41,7 +41,6 @@ class MyApp extends StatelessWidget {
                       ]),
                       strokeCap: StrokeCap.round,
                       innerFillColor: Colors.black12,
-                      backgroudColor: Colors.grey.shade100,
                       neonColor: Colors.blue.shade900),
                   Padding(
                     padding: const EdgeInsets.all(40),
