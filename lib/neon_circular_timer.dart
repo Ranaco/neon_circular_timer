@@ -151,6 +151,15 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     }
   }
 
+  String get totalDurationInHrsAndMins {
+    Duration duration = _controller!.duration!;
+    if (duration.inHours > 0) {
+      return '${duration.inHours}hr(s):${duration.inMinutes % 60} mins';
+    } else {
+      return '${duration.inMinutes} min(s)';
+    }
+  }
+
   int get currentTime =>
       (_controller!.duration! * _controller!.value).inSeconds;
 
@@ -246,7 +255,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
       child: Container(
         padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(double.infinity),
+            borderRadius: BorderRadius.circular(100),
             color: Color(0xffFFDA44).withOpacity(0.1)),
         child: Center(
             child: Icon(
@@ -345,58 +354,65 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            widget.showDuration &&
+                                    _controller!.duration!.inSeconds > 0
+                                ? Text(
+                                    totalDurationInHrsAndMins,
+                                    style: TextStyle(fontSize: 15),
+                                  )
+                                : SizedBox(),
+                            SizedBox(
+                              height: 5,
+                            ),
                             widget.isTimerTextShown
                                 ? Text(
                                     time,
                                     style: widget.textStyle ??
                                         Theme.of(context)
                                             .textTheme
-                                            .displaySmall
+                                            .headlineMedium
                                             ?.copyWith(
-                                              color: (_controller!.duration! *
-                                                              _controller!
-                                                                  .value)
-                                                          .inSeconds <
-                                                      30
-                                                  ? Colors.red
-                                                  : Colors.black,
-                                            ),
+                                                color: (_controller!.duration! *
+                                                                _controller!
+                                                                    .value)
+                                                            .inSeconds <
+                                                        30
+                                                    ? Colors.red
+                                                    : Colors.black,
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: 24),
                                   )
                                 : Container(),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            widget.showDuration &&
-                                    _controller!.duration!.inSeconds > 0
-                                ? Text(
-                                    'Total: ${_controller!.duration!.inMinutes.toString().padLeft(2, '0')}:${(_controller!.duration!.inSeconds % 60).toString().padLeft(2, '0')}',
-                                    style: widget.textStyle ??
-                                        Theme.of(context)
-                                            .textTheme
-                                            .displaySmall
-                                            ?.copyWith(
-                                                fontWeight: FontWeight.bold),
-                                  )
-                                : Container(),
-                            SizedBox(
-                              height: 30,
-                            ),
+                            if (_controller!.duration!.inSeconds > 0)
+                              SizedBox(
+                                height: 20,
+                              ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                _playPauseButton(),
+                                if (_controller!.duration!.inSeconds > 0)
+                                  _playPauseButton(),
                                 SizedBox(
                                   width: 5,
                                 ),
                                 if (_controller!.duration!.inSeconds > 0)
-                                  IconButton(
-                                      icon: Icon(Icons.stop),
-                                      onPressed: _resetTimer),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                if (widget.tenMinutesWidget != null)
-                                  widget.tenMinutesWidget!
+                                  InkWell(
+                                    onTap: _resetTimer,
+                                    child: Container(
+                                        padding: EdgeInsets.all(14),
+                                        decoration: BoxDecoration(
+                                            color: Colors.red.withOpacity(0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(100)),
+                                        child: Container(
+                                          height: 15,
+                                          width: 15,
+                                          decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius:
+                                                  BorderRadius.circular(5)),
+                                        )),
+                                  ),
                               ],
                             )
                           ],
