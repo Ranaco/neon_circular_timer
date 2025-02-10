@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'dart:developer';
 
 class CustomTimerPainter extends CustomPainter {
   CustomTimerPainter(
@@ -67,7 +68,12 @@ class CustomTimerPainter extends CustomPainter {
       blurPaint..shader = null;
     }
 
-    double progress = (animation!.value) * 2 * math.pi;
+    log("AnimationTo: " +
+        "Following is the animation ${animation?.value} ${animation?.value == 0.0}");
+
+    double progress = animation != null && animation?.value != 1.0
+        ? (animation!.value) * 2 * math.pi
+        : 0;
 
     if (innerFillGradient != null) {
       final rect = Rect.fromCircle(
@@ -96,8 +102,10 @@ class CustomTimerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomTimerPainter old) {
-    return animation!.value != old.animation!.value ||
-        neonColor != old.neonColor ||
-        innerFillColor != old.innerFillColor;
+    return animation != null
+        ? animation!.value != old.animation!.value ||
+            neonColor != old.neonColor ||
+            innerFillColor != old.innerFillColor
+        : true;
   }
 }
