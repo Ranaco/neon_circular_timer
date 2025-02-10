@@ -1,5 +1,6 @@
 library neon_circular_timer;
 
+import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'neon_circular_painter.dart';
 
@@ -151,15 +152,6 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     }
   }
 
-  String get totalDurationInHrsAndMins {
-    Duration duration = _controller!.duration!;
-    if (duration.inHours > 0) {
-      return '${duration.inHours}hr(s):${duration.inMinutes % 60} mins';
-    } else {
-      return '${duration.inMinutes} min(s)';
-    }
-  }
-
   int get currentTime =>
       (_controller!.duration! * _controller!.value).inSeconds;
 
@@ -251,19 +243,9 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   }
 
   Widget _playPauseButton() {
-    return InkWell(
-      child: Container(
-        padding: EdgeInsets.all(14),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
-            color: Color(0xffFFDA44).withOpacity(0.1)),
-        child: Center(
-            child: Icon(
-          _controller!.isAnimating ? Icons.pause : Icons.play_arrow,
-          color: Color(0xffFFB534),
-        )),
-      ),
-      onTap: () {
+    return IconButton(
+      icon: Icon(_controller!.isAnimating ? Icons.pause : Icons.play_arrow),
+      onPressed: () {
         if (_controller!.isAnimating) {
           _controller!.stop();
           if (widget.onPauseOrResume != null) {
@@ -291,22 +273,20 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
 
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: widget.duration),
+      duration: Duration(seconds: duration),
     );
 
     _controller!.addStatusListener((status) {
-      print(status.name);
-      print(widget.duration);
       switch (status) {
         case AnimationStatus.forward:
-          _onStart();
-          break;
         case AnimationStatus.reverse:
           _onStart();
           break;
+        case AnimationStatus.dismissed:
         case AnimationStatus.completed:
-          if (widget.duration == 0) break;
-          _onComplete();
+          if (!widget.isReverse || status == AnimationStatus.dismissed) {
+            _onComplete();
+          }
           break;
         default:
           break;
@@ -354,65 +334,58 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            widget.showDuration &&
-                                    _controller!.duration!.inSeconds > 0
-                                ? Text(
-                                    totalDurationInHrsAndMins,
-                                    style: TextStyle(fontSize: 15),
-                                  )
-                                : SizedBox(),
-                            SizedBox(
-                              height: 5,
-                            ),
                             widget.isTimerTextShown
                                 ? Text(
                                     time,
                                     style: widget.textStyle ??
                                         Theme.of(context)
                                             .textTheme
-                                            .headlineMedium
+                                            .displaySmall
                                             ?.copyWith(
-                                                color: (_controller!.duration! *
-                                                                _controller!
-                                                                    .value)
-                                                            .inSeconds <
-                                                        30
-                                                    ? Colors.red
-                                                    : Colors.black,
-                                                fontWeight: FontWeight.w900,
-                                                fontSize: 24),
+                                              color: (_controller!.duration! *
+                                                              _controller!
+                                                                  .value)
+                                                          .inSeconds <
+                                                      30
+                                                  ? Colors.red
+                                                  : Colors.black,
+                                            ),
                                   )
                                 : Container(),
-                            if (_controller!.duration!.inSeconds > 0)
-                              SizedBox(
-                                height: 20,
-                              ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            widget.showDuration &&
+                                    _controller!.duration!.inSeconds > 0
+                                ? Text(
+                                    'Total: ${_controller!.duration!.inMinutes.toString().padLeft(2, '0')}:${(_controller!.duration!.inSeconds % 60).toString().padLeft(2, '0')}',
+                                    style: widget.textStyle ??
+                                        Theme.of(context)
+                                            .textTheme
+                                            .displaySmall
+                                            ?.copyWith(
+                                                fontWeight: FontWeight.bold),
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: 30,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                if (_controller!.duration!.inSeconds > 0)
-                                  _playPauseButton(),
+                                _playPauseButton(),
                                 SizedBox(
                                   width: 5,
                                 ),
                                 if (_controller!.duration!.inSeconds > 0)
-                                  InkWell(
-                                    onTap: _resetTimer,
-                                    child: Container(
-                                        padding: EdgeInsets.all(14),
-                                        decoration: BoxDecoration(
-                                            color: Colors.red.withOpacity(0.1),
-                                            borderRadius:
-                                                BorderRadius.circular(100)),
-                                        child: Container(
-                                          height: 15,
-                                          width: 15,
-                                          decoration: BoxDecoration(
-                                              color: Colors.red,
-                                              borderRadius:
-                                                  BorderRadius.circular(5)),
-                                        )),
-                                  ),
+                                  IconButton(
+                                      icon: Icon(Icons.stop),
+                                      onPressed: _resetTimer),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                if (widget.tenMinutesWidget != null)
+                                  widget.tenMinutesWidget!
                               ],
                             )
                           ],
@@ -477,6 +450,8 @@ class CountDownController {
   /// This Method Restarts the Countdown Timer,
   /// Here optional int parameter **duration** is the updated duration for countdown timer
   void restart({int? duration}) {
+    if (_state._controller == null || !_state.mounted) return;
+
     _state._controller!.duration =
         Duration(seconds: duration ?? _state._controller!.duration!.inSeconds);
     if (_isReverse) {
