@@ -68,9 +68,6 @@ class CustomTimerPainter extends CustomPainter {
       blurPaint..shader = null;
     }
 
-    log("AnimationTo: " +
-        "Following is the animation ${animation?.value} ${animation?.value == 0.0}");
-
     double progress = animation != null && animation?.value != 1.0
         ? (animation!.value) * 2 * math.pi
         : 0;
