@@ -348,7 +348,8 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                               strokeCap: widget.strokeCap,
                               outerStrokeColor: widget.outerStrokeColor,
                               outerStrokeGradient: widget.outerStrokeGradient,
-                              neon: widget.neon),
+                              neon: widget.neon,
+                              isReverse: widget.isReverse), // pass new flag
                         ),
                       ),
                       Align(
