@@ -255,14 +255,12 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
           if (widget.onPauseOrResume != null) {
             widget.onPauseOrResume!(false);
           }
-          ;
         } else {
-          if (widget.onPauseOrResume != null) widget.onPauseOrResume!(true);
-          if (widget.isReverse) {
-            _controller!.reverse(from: _controller!.value);
-          } else {
-            _controller!.forward(from: _controller!.value);
+          if (widget.onPauseOrResume != null) {
+            widget.onPauseOrResume!(true);
           }
+          // Always use reverse so the animation counts down from full to empty.
+          _controller!.reverse(from: _controller!.value);
         }
         setState(() {});
       },
@@ -349,7 +347,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                               outerStrokeColor: widget.outerStrokeColor,
                               outerStrokeGradient: widget.outerStrokeGradient,
                               neon: widget.neon,
-                              isReverse: widget.isReverse), // pass new flag
+                              isReverse: false), // always use positive fill
                         ),
                       ),
                       Align(

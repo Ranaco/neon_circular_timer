@@ -83,9 +83,8 @@ class CustomTimerPainter extends CustomPainter {
     }
     Path path = Path();
 
-    // use negative sweep if reverse
-    path.addArc(
-        Offset.zero & size, math.pi * 1.5, isReverse ? -progress : progress);
+    // Always use a positive sweep for full-to-empty fill.
+    path.addArc(Offset.zero & size, math.pi * 1.5, progress);
 
     Path path_1 = Path()..addArc(Offset.zero & size, 0, math.pi * 2);
     if (neumorphicEffect) {
