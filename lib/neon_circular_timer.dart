@@ -135,19 +135,26 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
   int duration = 0;
 
   String get time {
-    if (widget.isReverse && _controller!.isDismissed) {
-      if (widget.textFormat == TextFormat.MM_SS) {
-        return "00:00";
-      } else if (widget.textFormat == TextFormat.SS) {
-        return "00";
-      } else if (widget.textFormat == TextFormat.S) {
-        return "0";
-      } else {
-        return "00:00:00";
+    int totalSeconds = _controller!.duration!.inSeconds;
+    int elapsedSeconds =
+        (_controller!.duration!.inSeconds * _controller!.value).toInt();
+    if (widget.isReverse) {
+      int remainingSeconds = totalSeconds - elapsedSeconds;
+      if (remainingSeconds <= 0) {
+        // Return formatted zero based on text format.
+        if (widget.textFormat == TextFormat.MM_SS) {
+          return "00:00";
+        } else if (widget.textFormat == TextFormat.SS) {
+          return "00";
+        } else if (widget.textFormat == TextFormat.S) {
+          return "0";
+        } else {
+          return "00:00:00";
+        }
       }
+      return _getTime(Duration(seconds: remainingSeconds));
     } else {
-      Duration duration = _controller!.duration! * _controller!.value;
-      return _getTime(duration);
+      return _getTime(Duration(seconds: elapsedSeconds));
     }
   }
 
