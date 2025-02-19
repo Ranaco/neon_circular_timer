@@ -174,7 +174,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     widget.controller?._duration = duration;
 
     if (widget.initialDuration > 0 && widget.autoStart) {
-      if (widget.isReverse) {
+      if (!widget.isReverse) {
         _controller?.value = 1 - (widget.initialDuration / duration);
       } else {
         _controller?.value = (widget.initialDuration / duration);
@@ -255,12 +255,14 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
           if (widget.onPauseOrResume != null) {
             widget.onPauseOrResume!(false);
           }
+          ;
         } else {
-          if (widget.onPauseOrResume != null) {
-            widget.onPauseOrResume!(true);
+          if (widget.onPauseOrResume != null) widget.onPauseOrResume!(true);
+          if (!widget.isReverse) {
+            _controller!.reverse(from: _controller!.value);
+          } else {
+            _controller!.forward(from: _controller!.value);
           }
-          // Always use reverse so the animation counts down from full to empty.
-          _controller!.reverse(from: _controller!.value);
         }
         setState(() {});
       },
@@ -280,7 +282,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
 
     // Set initial controller value based on timer type
     if (widget.initialDuration == 0) {
-      _controller!.value = widget.isReverse ? 1.0 : 0.0;
+      _controller!.value = !widget.isReverse ? 1.0 : 0.0;
     }
 
     // Remove _setAnimation() call and set animation direction next.
@@ -289,7 +291,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     // Start the animation if autoStart is true
     if (widget.autoStart) {
       if (widget.initialDuration == 0) {
-        if (widget.isReverse) {
+        if (!widget.isReverse) {
           _controller!.reverse(from: 1.0);
         } else {
           _controller!.forward(from: 0.0);
@@ -346,8 +348,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
                               strokeCap: widget.strokeCap,
                               outerStrokeColor: widget.outerStrokeColor,
                               outerStrokeGradient: widget.outerStrokeGradient,
-                              neon: widget.neon,
-                              isReverse: false), // always use positive fill
+                              neon: widget.neon),
                         ),
                       ),
                       Align(
@@ -468,7 +469,7 @@ class CountDownController {
 
   /// This Method Resumes the Countdown Timer
   void resume() {
-    if (_isReverse) {
+    if (!_isReverse) {
       _state._controller?.reverse(from: _state._controller!.value);
     } else {
       _state._controller?.forward(from: _state._controller!.value);
@@ -480,7 +481,7 @@ class CountDownController {
   void restart({int? duration}) {
     _state._controller!.duration =
         Duration(seconds: duration ?? _state._controller!.duration!.inSeconds);
-    if (_isReverse) {
+    if (!_isReverse) {
       _state._controller?.reverse(from: 1);
     } else {
       _state._controller?.forward(from: 0);

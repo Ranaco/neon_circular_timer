@@ -14,8 +14,7 @@ class CustomTimerPainter extends CustomPainter {
       this.strokeCap,
       required this.neon,
       this.outerStrokeColor,
-      this.outerStrokeGradient,
-      this.isReverse = false}) // new parameter with default value
+      this.outerStrokeGradient})
       : super(repaint: animation);
 
   final double? neon;
@@ -25,7 +24,6 @@ class CustomTimerPainter extends CustomPainter {
   final double? strokeWidth;
   final StrokeCap? strokeCap;
   final Gradient? innerFillGradient, neonGradient, outerStrokeGradient;
-  final bool isReverse; // added flag
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -83,7 +81,6 @@ class CustomTimerPainter extends CustomPainter {
     }
     Path path = Path();
 
-    // Always use a positive sweep for full-to-empty fill.
     path.addArc(Offset.zero & size, math.pi * 1.5, progress);
 
     Path path_1 = Path()..addArc(Offset.zero & size, 0, math.pi * 2);
