@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'dart:developer';
 
 class CustomTimerPainter extends CustomPainter {
   CustomTimerPainter(

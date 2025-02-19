@@ -109,7 +109,7 @@ class NeonCircularTimer extends StatefulWidget {
       this.neonGradient,
       this.outerStrokeGradient,
       this.initialDuration = 0,
-      this.isReverse = false,
+      this.isReverse = true,
       this.isReverseAnimation = false,
       this.onComplete,
       this.onStart,
