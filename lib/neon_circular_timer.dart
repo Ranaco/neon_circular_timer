@@ -110,7 +110,7 @@ class NeonCircularTimer extends StatefulWidget {
       this.outerStrokeGradient,
       this.initialDuration = 0,
       this.isReverse = true,
-      this.isReverseAnimation = false,
+      this.isReverseAnimation = true,
       this.onComplete,
       this.onStart,
       this.strokeWidth = 10.0,
@@ -174,7 +174,7 @@ class NeonCircularTimerState extends State<NeonCircularTimer>
     widget.controller?._duration = duration;
 
     if (widget.initialDuration > 0 && widget.autoStart) {
-      if (widget.isReverse) {
+      if (!widget.isReverse) {
         _controller?.value = 1 - (widget.initialDuration / duration);
       } else {
         _controller?.value = (widget.initialDuration / duration);
